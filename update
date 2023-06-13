@@ -1,0 +1,8 @@
+#!/bin/bash
+echo "Enter the path to file you want to add to gitHub"
+read fp
+git add $fp
+echo "Enter your commit message"
+read cm
+git commit -m "$cm"
+git push

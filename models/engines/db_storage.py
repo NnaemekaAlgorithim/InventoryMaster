@@ -37,22 +37,19 @@ class DBStorage:
         if getenv("IMS_ENV") == "test":
             Base.metadata.drop_all(self.__engine)
 
-    def all(self, cls=None):
-        """Query on the curret database session all objects of the given class.
+    def all(self, cls, user_id):
+        """Query on the current database session all objects of the given class and user_id.
 
-        If cls is None, queries all types of objects.
+        Args:
+            cls (str): The class name to query.
+            user_id (int): The user ID to filter the results.
 
         Return:
             Dict of queried classes in the format <class name>.<obj id> = obj.
         """
-        if cls is None:
-            objs = self.__session.query(Inventory).all()
-            objs.extend(self.__session.query(Sales).all())
-            objs.extend(self.__session.query(Users).all())
-        else:
-            if type(cls) == str:
-                cls = eval(cls)
-            objs = self.__session.query(cls)
+        if type(cls) == str:
+            cls = eval(cls)
+        objs = self.__session.query(cls).filter_by(user_id=user_id).all()
         return {"{}.{}".format(type(o).__name__, o.id): o for o in objs}
 
     def new(self, obj):
@@ -80,33 +77,35 @@ class DBStorage:
         """Close the working SQLAlchemy session."""
         self.__session.close()
 
-    def get(self, cls, id):
+    def get(self, cls, id, user_id):
         """Returns a given instance from __objects.
 
         Args:
             cls (str): The class name of the instance to retrieve.
-            id  (str): The ID of the instance to retrieve.
+            id (str): The ID of the instance to retrieve.
+            user_id (int): The user ID to filter the results.
+
+        Returns:
+            The requested instance or None if not found.
         """
         try:
             obj = eval(cls)
         except NameError:
             return None
         if obj in self.__classes.values():
-            return self.__session.query(obj).filter(obj.id == id).first()
+            return self.__session.query(obj).filter_by(user_id=user_id, id=id).first()
 
-    def count(self, cls=None):
+    def count(self, cls, user_id):
         """Returns a count of all instances of the given class in __objects.
-
-        If no class is given, returns the total object count.
 
         Args:
             cls (str): The class type to count instances of.
+            user_id (int): The user ID to filter the results.
+
+        Returns:
+            The count of instances.
         """
-        if cls is None:
-            return sum(
-                len(self.__session.query(obj).all())
-                for obj in self.__classes.values()
-            )
-        if cls in self.__classes.keys():
-            return len(self.__session.query(self.__classes[cls]).all())
-        return 0
+        if type(cls) == str and cls in self.__classes.keys():
+            count = self.__session.query(self.__classes[cls]).filter_by(user_id=user_id).count()
+            return count
+        return

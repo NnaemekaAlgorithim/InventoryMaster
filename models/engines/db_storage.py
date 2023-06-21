@@ -2,8 +2,6 @@
 """Defines the DBStorage engine."""
 from os import getenv
 from models.base_model import Base, BaseModel
-from models.inventory_record_update import Inventory
-from models.sales_record_update import Sales
 from models.users_record_update import Users
 from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, scoped_session, sessionmaker
@@ -21,8 +19,6 @@ class DBStorage:
     __engine = None
     __session = None
     __classes = {
-        "Inventory": Inventory,
-        "Sales": Sales,
         "Users": Users,
     }
 
@@ -109,3 +105,32 @@ class DBStorage:
             count = self.__session.query(self.__classes[cls]).filter_by(user_id=user_id).count()
             return count
         return
+
+    def register_user(self, user_data):
+        """Register a new user and create a corresponding user object.
+
+        Args:
+            user_data (dict): User data containing username, password, etc.
+
+        Returns:
+            The newly created user object.
+        """
+        user = Users(**user_data)
+        self.new(user)
+        self.save()
+        return user
+
+    def login_user(self, username, password):
+        """Authenticate a user by username and password.
+
+        Args:
+            username (str): The username.
+            password (str): The password.
+
+        Returns:
+            The user object if the authentication is successful, None otherwise.
+        """
+        user = self.__session.query(Users).filter_by(username=username).first()
+        if user and user.check_password(password):
+            return user
+        return None

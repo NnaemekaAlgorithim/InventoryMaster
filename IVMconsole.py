@@ -7,23 +7,7 @@ from shlex import split
 from models import storage
 from models.users_record_update import User
 from models.base_model import Base, BaseModel
-
-def parse(arg):
-    curly_braces = re.search(r"\{(.*?)\}", arg)
-    brackets = re.search(r"\[(.*?)\]", arg)
-    if curly_braces is None:
-        if brackets is None:
-            return [i.strip(",") for i in split(arg)]
-        else:
-            lexer = split(arg[:brackets.span()[0]])
-            retl = [i.strip(",") for i in lexer]
-            retl.append(brackets.group())
-            return retl
-    else:
-        lexer = split(arg[:curly_braces.span()[0]])
-        retl = [i.strip(",") for i in lexer]
-        retl.append(curly_braces.group())
-        return retl
+import shlex
 
 
 class IMSCommand(cmd.Cmd):
@@ -103,12 +87,37 @@ class IMSCommand(cmd.Cmd):
             storage.new(obj)
             storage.save()
             print(obj.id)
-            print(kwargs)
+            print("Thanks for joining us!")
 
         except SyntaxError:
             print("** Invalid syntax. Please provide class name and attribute-value pairs **")
         except NameError:
             print("** Class doesn't exist **")
 
+    def do_login(self, line):
+        """Usage: login email=<email> password=<password>
+        Login with the provided email and password.
+        """
+        kwargs = {}
+        args = shlex.split(line)
+        for arg in args:
+            key, value = arg.split("=")
+            kwargs[key] = value
+
+        email = kwargs.get("email")
+        password = kwargs.get("password")
+
+        if email and password:
+            user = storage.get_user(email, password)
+            if user:
+                global status
+                status = user.id
+                print(f"Welcome {user.first_name}")
+            else:
+                print("Invalid email or password")
+        else:
+            print("Please provide both email and password")
+            
+            
 if __name__ == "__main__":
      IMSCommand().cmdloop()

@@ -48,7 +48,7 @@ class DBStorage:
         if obj is not None:
             self.__session.delete(obj)
 
-    def get_user(self, email, password):
+    def get_user(self, email=None, password=None):
         """Retrieve a user from the database by email and password.
 
         Args:
@@ -58,8 +58,7 @@ class DBStorage:
         Returns:
             User: The matching User object if found, None otherwise.
         """
-        hashed_password = md5(password.encode("utf-8")).hexdigest()
-        user = self.__session.query(User).filter(and_(User.email == email, User.password == hashed_password)).first()
+        user = self.__session.query(User).filter(and_(User.email == email, User.password == password)).first()
         
         if user:
             return user

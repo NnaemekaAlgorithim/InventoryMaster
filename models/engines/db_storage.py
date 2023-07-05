@@ -5,7 +5,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from hashlib import md5
-from models.users_record_update import User
+from models.users import User
+from models.inventory import Inventory
+from models.sales import Sales
 from sqlalchemy import and_
 
 Base = declarative_base()
@@ -63,6 +65,24 @@ class DBStorage:
         if user:
             return user
         
+        return None
+
+    def get_inventory(self, user_id=None, name_of_product=None):
+        """Retrieve an inventory item from the database by user_id and product_name.
+
+        Args:
+            user_id (int): The user's ID.
+            product_name (str): The name of the product.
+
+        Returns:
+            Inventory: The matching Inventory object if found, None otherwise.
+        """
+
+        inventory = self.__session.query(Inventory).filter(and_(Inventory.user_id == user_id, Inventory.product_name == name_of_product)).first()
+
+        if inventory:
+            return inventory
+
         return None
 
     def reload(self):

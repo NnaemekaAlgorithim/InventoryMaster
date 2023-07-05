@@ -40,25 +40,18 @@ class BaseModel:
         models.storage.new(self)
         models.storage.save()
 
-    def to_dict(self, remove_password=True):
-        """Return a dictionary representation of the BaseModel instance.
-
-        Includes the key/value pair __class__ representing the class name
-        of the object. Does not store passwords unless instructed.
-        """
-        dictionary = self.__dict__.copy()
-        dictionary["__class__"] = str(type(self).__name__)
-        dictionary["created_at"] = self.created_at.isoformat()
-        dictionary["updated_at"] = self.updated_at.isoformat()
-        dictionary.pop("_sa_instance_state", None)
-        if remove_password is True:
-            dictionary.pop("password", None)
-        return dictionary
-
     def delete(self):
         """Delete the current instance from storage."""
         models.storage.delete(self)
 
+    def retrive(arg1, arg2):
+        """retrives current instance from storage"""
+        return  models.storage.get_user(arg1, arg2)
+
+    def check_inventory(user_id, name_of_product):
+        """returns the object of the product if it exists else None"""
+        return models.storage.get_inventory(user_id, name_of_product)
+    
     def __str__(self):
         """Return the print/str representation of the BaseModel instance."""
         d = self.__dict__.copy()

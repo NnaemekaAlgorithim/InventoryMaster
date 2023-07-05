@@ -5,7 +5,7 @@ import models
 from os import getenv
 from models.base_model import Base, BaseModel
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
-from sqlalchemy.orm import relationship class.
+from sqlalchemy.orm import relationship
 
 
 class Sales(BaseModel, Base):
@@ -22,6 +22,6 @@ class Sales(BaseModel, Base):
     """
     __tablename__ = "sales"
     user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
-    inventory_name_of_product = Column(String(128), Foreignkey("inventory.name_of_product"), nullable=False)
-    number_sold = Column(Integer, default=0)
-    inventory_price = Column(Integer, Foreignkey("inventory.price"), default=0)
+    productInv_name = Column(String(128), ForeignKey("inventory.product_name"), nullable=False)
+    qty_sold = Column(Integer, default=0)
+    product_price = Column(Integer, ForeignKey("inventory.price"), default=0)

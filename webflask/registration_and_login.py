@@ -1,8 +1,8 @@
 from flask import Blueprint
 from flask import Flask, request, jsonify
-from models.users_record_update import User
-from models.inventory_record_update import Inventory
-from models.sales_record_update import Sales
+from models.users import User
+from models.inventory import Inventory
+from models.sales import Sales
 from datetime import timedelta
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 

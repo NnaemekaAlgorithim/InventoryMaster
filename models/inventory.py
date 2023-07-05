@@ -4,7 +4,7 @@ import models
 from os import getenv
 from models.base_model import Base, BaseModel
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Query
 
 
 class Inventory(BaseModel, Base):
@@ -21,6 +21,6 @@ class Inventory(BaseModel, Base):
     """
     __tablename__ = "inventory"
     user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
-    name_of_product = Column(String(128), nullable=False)
-    number_in_stock = Column(Integer, default=0)
+    product_name = Column(String(128), nullable=False)
+    in_stock = Column(Integer, default=0)
     price = Column(Integer, default=0)

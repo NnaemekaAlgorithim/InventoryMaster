@@ -2,9 +2,9 @@ from flask import Blueprint
 from decimal import Decimal
 from sqlalchemy.exc import SQLAlchemyError
 from flask import Flask, request, jsonify
-from models.users_record_update import User
-from models.inventory_record_update import Inventory
-from models.sales_record_update import Sales
+from models.users import User
+from models.inventory import Inventory
+from models.sales import Sales
 from datetime import timedelta
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
@@ -22,7 +22,7 @@ def new():
     user_id = get_jwt_identity()
 
     inventory = Inventory()
-    
+
     try:
         # Check if the product already exists for the current user
         existing_inventory = Inventory.check_inventory(user_id, name_of_product)

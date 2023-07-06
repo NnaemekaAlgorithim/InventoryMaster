@@ -30,9 +30,10 @@ def new():
         if existing_inventory:
             # Update the in_stock value by adding the new number_in_stock value
             existing_inventory.in_stock += number_in_stock
+            json_inventory = existing_inventory.to_dict()
             existing_inventory.save()
 
-            return jsonify(message='Update of old record successful'), 200
+            return jsonify(message='Update of old record successful', inventory=json_inventory), 200
 
         else:
             # Create a new Inventory object and populate its attributes
@@ -43,11 +44,13 @@ def new():
 
             # save inventory to the database
             inventory.save()
+            json_inventory = inventory.to_dict()
 
             # Return a success message
-            return jsonify(message='New inventory record added')
+            return jsonify(message='New inventory record added', inventory=json_inventory)
 
     except SQLAlchemyError as e:
         # Handle any potential database errors
         inventory.delete()
+        inventory.save()
         return jsonify(message='Error updating inventory', error=str(e)), 500

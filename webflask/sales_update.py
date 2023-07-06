@@ -32,6 +32,7 @@ def sale():
                 # Update the inventory by reducing the quantity_sold
                 existing_inventory.in_stock -= quantity_sold
                 existing_inventory.save()
+                json_inventory = existing_inventory.to_dict()
 
                 # Create a new sale object using the Sales class
                 sale = Sales(
@@ -43,12 +44,15 @@ def sale():
 
                 # Save the sale object to the database
                 sale.save()
+                json_sale = sale.to_dict()
 
-                return jsonify(message='Sale recorded successfully!'), 200
+                return jsonify(message='Sale recorded successfully!', sale=json_sale, inventory=json_inventory), 200
             else:
                 return jsonify(message='Insufficient stock for the sale'), 200
         else:
             return jsonify(message='Product is not in inventory'), 200
 
     except SQLAlchemyError as e:
+        sale.delete()
+        sale.save()
         return jsonify(message='Error processing sale', error=str(e)), 500

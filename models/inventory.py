@@ -19,6 +19,7 @@ class Inventory(BaseModel, Base):
         number_in_stock (sqlalchemy Integer): The current quantity of product.
         price (sqlalchemy Integer): The price of the product.
     """
+    
     __tablename__ = "inventory"
     user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
     product_name = Column(String(128), nullable=False)

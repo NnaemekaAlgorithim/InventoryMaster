@@ -20,6 +20,7 @@ class Sales(BaseModel, Base):
         number_sold (sqlalchemy Integer): The number of products sold.
         inventory_price (sqlalchemy Integer): The price of the product.
     """
+    
     __tablename__ = "sales"
     user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
     productInv_name = Column(String(128), ForeignKey("inventory.product_name"), nullable=False)

@@ -9,6 +9,7 @@ from models.users import User
 from models.inventory import Inventory
 from models.sales import Sales
 from sqlalchemy import and_
+from sqlalchemy import text, column, select
 
 Base = declarative_base()
 
@@ -25,6 +26,11 @@ class DBStorage:
 
     __engine = None
     __session = None
+    __classes = {
+        "User": User,
+        "Inventory": Inventory,
+        "Sales": Sales
+    }
 
     def __init__(self):
         """Initialize a new DBStorage instance."""
@@ -45,10 +51,25 @@ class DBStorage:
         """Commit all changes to the current database session."""
         self.__session.commit()
 
-    def delete(self, obj=None):
-        """Delete obj from the current database session."""
-        if obj is not None:
+    def delete(self, user_id):
+        """Delete all data for a given user_id from the current database session."""
+        objects_to_delete = self.__session.query(Sales).filter_by(user_id=user_id).all()
+    
+        for obj in objects_to_delete:
             self.__session.delete(obj)
+        self.__session.commit()
+
+        objects_to_delete2 = self.__session.query(Inventory).filter_by(user_id=user_id).all()
+    
+        for obj in objects_to_delete2:
+            self.__session.delete(obj)
+        self.__session.commit()
+
+        objects_to_delete4 = self.__session.query(User).filter_by(id=user_id).all()
+    
+        for obj in objects_to_delete4:
+            self.__session.delete(obj)
+        self.__session.commit()
 
     def get_user(self, email=None, password=None):
         """Retrieve a user from the database by email and password.
@@ -84,7 +105,7 @@ class DBStorage:
             return inventory
 
         return None
-
+    
     def reload(self):
         """Create all tables in the database and initialize a new session."""
         Base.metadata.create_all(self.__engine)

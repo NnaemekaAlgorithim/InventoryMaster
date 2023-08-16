@@ -51,23 +51,11 @@ class DBStorage:
         """Commit all changes to the current database session."""
         self.__session.commit()
 
-    def delete(self, user_id):
+    def delete_user(self, user_id, class_name):
         """Delete all data for a given user_id from the current database session."""
-        objects_to_delete = self.__session.query(Sales).filter_by(user_id=user_id).all()
+        objects_to_delete = self.__session.query(class_name).filter_by(user_id=user_id).all()
     
         for obj in objects_to_delete:
-            self.__session.delete(obj)
-        self.__session.commit()
-
-        objects_to_delete2 = self.__session.query(Inventory).filter_by(user_id=user_id).all()
-    
-        for obj in objects_to_delete2:
-            self.__session.delete(obj)
-        self.__session.commit()
-
-        objects_to_delete4 = self.__session.query(User).filter_by(id=user_id).all()
-    
-        for obj in objects_to_delete4:
             self.__session.delete(obj)
         self.__session.commit()
 
@@ -105,6 +93,25 @@ class DBStorage:
             return inventory
 
         return None
+
+    def get_all(self, user_id, class_name):
+        """Retrieve objects from the specified table by user_id.
+
+        Args:
+            user_id (int): The user's ID.
+            class_name (str): The name of the class representing the database table.
+
+        Returns:
+            list: A list of matching objects if found, an empty list otherwise.
+        """
+
+        # Query the table based on the user_id
+        objects = []
+        objects = self.__session.query(class_name).filter(class_name.user_id == user_id).all()
+        if not objects:
+            return []
+
+        return objects
     
     def reload(self):
         """Create all tables in the database and initialize a new session."""

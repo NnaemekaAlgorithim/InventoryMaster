@@ -40,13 +40,9 @@ class BaseModel:
         models.storage.new(self)
         models.storage.save()
 
-    def remove_user(self, user_id):
-        """Delete the current user from database."""
-        models.storage.delete(user_id)
-
-    def retrive(arg1, arg2):
+    def retrive(email, password):
         """retrives current instance from storage"""
-        return  models.storage.get_user(arg1, arg2)
+        return  models.storage.get_user(email, password)
 
     def check_inventory(user_id, name_of_product):
         """returns the object of the product if it exists else None"""
@@ -65,8 +61,10 @@ class BaseModel:
         dictionary.pop("_sa_instance_state", None)
         return dictionary
 
-    def show_inventory(self, user_id):
-        return models.storage.get_all(user_id)
+    def show_all(self, user_id):
+        inventory_records = models.storage.get_all(self, user_id, "Inventory")
+        sales_records = models.storage.get_all(self, user_id, "Sales")
+        return inventory_records, sales_records
     
     def __str__(self):
         """Return the print/str representation of the BaseModel instance."""

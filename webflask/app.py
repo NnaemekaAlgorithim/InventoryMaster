@@ -5,6 +5,7 @@ from webflask.sales_update import blueprint3
 from webflask.delete_user import blueprint4
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 import secrets
+from flask_cors import CORS
 
 app = Flask(__name__)
 
